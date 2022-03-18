@@ -53,6 +53,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   PWM_cmd.msg
+  APF_cmd.msg
   # Message2.msg
 )
 
