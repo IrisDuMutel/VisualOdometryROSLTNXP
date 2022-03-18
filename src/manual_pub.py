@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# This code si a simulation of what data_fused_receiver.py would do if the mavlink link was up
+# It is useful to use it to see how the EKF behaves
+
+
 from math import cos, sin, sqrt,pi
 import rospy
 import message_filters

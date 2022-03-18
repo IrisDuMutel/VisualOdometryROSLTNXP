@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+ # This node is in charge of receiving the data from the mavlink connection 
+ # and publishing such data into dedicated topics to be feed to the EKF
+ 
+
 from math import cos, sin, sqrt,pi
 import rospy
 import message_filters
@@ -17,25 +21,6 @@ from pymavlink import mavutil
 connection_in = mavutil.mavlink_connection('udp:0.0.0.0:8151', input=True)
 
 def mavlink_receiver():
-    # pub = rospy.Publisher('ekf_data_fused', Odometry, queue_size=10)
-    # rospy.init_node('mavlink_manager_in', anonymous=True)
-    # rate = rospy.Rate(5) # 10hz
-    # while not rospy.is_shutdown():
-    #     current_time = rospy.Time.now()
-    #     ekf_data_fused = connection_in.recv_match(type='ODOMETRY', blocking=True) # connection_in.messages['Odometry']
-    #     # print("ecco sta merda di msg")
-    #     # print(connection_in)
-    #     ekf_data_fused_ros = Odometry()
-    #     ekf_data_fused_ros.header.stamp = current_time
-    #     ekf_data_fused_ros.header.frame_id = "odom"
-    #     ekf_data_fused_ros.pose.pose.position.x = ekf_data_fused.x
-    #     ekf_data_fused_ros.pose.pose.position.y = ekf_data_fused.y
-    #     ekf_data_fused_ros.pose.pose.orientation.w = ekf_data_fused.q[0]
-    #     ekf_data_fused_ros.pose.pose.orientation.x = ekf_data_fused.q[3]
-    #     ekf_data_fused_ros.twist.twist.linear.x = ekf_data_fused.vx
-    #     ekf_data_fused_ros.twist.twist.linear.y = ekf_data_fused.vy
-    #     pub.publish(ekf_data_fused_ros)
-    #     rate.sleep()
 
     pub_enc = rospy.Publisher('encoder', Odometry, queue_size=10)
     pub_mag = rospy.Publisher('magnetometer', Odometry,queue_size=10)

@@ -5,6 +5,9 @@ from sensor_msgs.msg import Imu
 import message_filters
 from scipy.spatial.transform import Rotation as R
 
+# This node subscibed to an IMU topic, the filtrated EKF values and the RTABmap odometry
+# Yaw values are compared through a print in the terminal
+
 class Quat2Eul_visualOdom(): 
     def callback(self,sub_ekf,sub_RSimag,sub_imudata):
         self.msg.pose.pose.orientation = sub_imudata.orientation
