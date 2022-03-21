@@ -166,6 +166,7 @@ def publish_messages():
         encoders_ros.pose.pose.position.y = 0
         x_0 = encoders_ros.pose.pose.position.x
         y_0 = encoders_ros.pose.pose.position.y
+        encoders_ros.pose.pose.orientation.w = 1
         # print('Psi value from frdm', psi_new*180/pi, encoders_ros.pose.pose.position.x, encoders_ros.pose.pose.position.y, (pos_l_new+pos_r_new), x_0, y_0)
         # encoders_ros.pose.pose.position.y = 0
         pub_enc.publish(encoders_ros)

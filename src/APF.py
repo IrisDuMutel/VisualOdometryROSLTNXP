@@ -15,8 +15,6 @@ from geometry_msgs.msg import Pose
 from sensor_msgs.msg import Imu
 from visual_odometry.msg import PWM_cmd,APF_cmd
 
-from scipy.spatial.transform import Rotation as R
-
 
 # Potential field characteristics
 rho_0 = 0.7;                   # Area of influence of obstacle  [m]

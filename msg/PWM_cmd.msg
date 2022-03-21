@@ -1,2 +1,2 @@
-uint8 PWM_rigth
-uint8 PWM_left
+float32 PWM_right
+float32 PWM_left

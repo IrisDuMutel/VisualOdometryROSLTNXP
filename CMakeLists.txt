@@ -173,7 +173,9 @@ catkin_install_python(PROGRAMS
   src/quat2eul_converter.py
   src/quat2eul_converter_sim.py
   src/manual_pub.py
+  src/manual_pub2.py
   src/APF.py
+  src/PIDcontroller.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
