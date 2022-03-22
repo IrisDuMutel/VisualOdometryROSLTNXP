@@ -176,6 +176,8 @@ catkin_install_python(PROGRAMS
   src/manual_pub2.py
   src/APF.py
   src/PIDcontroller.py
+  src/vo_sender_APF.py
+  
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

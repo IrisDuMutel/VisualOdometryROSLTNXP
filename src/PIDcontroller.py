@@ -5,8 +5,6 @@
 from numpy import linalg as LA
 import math
 import queue
-
-from zmq import EVENT_CLOSE_FAILED
 import rospy
 import message_filters
 from nav_msgs.msg import Odometry
