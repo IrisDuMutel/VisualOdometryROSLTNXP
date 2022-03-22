@@ -6,6 +6,9 @@ import math
 import message_filters
 from scipy.spatial.transform import Rotation as R
 
+# This node subscibed to an IMU topic and to the filtrated imu values
+# Yaw values are compared through a print in the terminal
+
 class Quat2Eul_visualOdom(): 
     def callback(self,sub_imu,sub_filter):
         self.msg.pose.pose.orientation = sub_imu.orientation

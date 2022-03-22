@@ -41,10 +41,13 @@ def publish_messages():
     #     pub.publish(ekf_data_fused_ros)
     #     rate.sleep()
 
-    pub_enc = rospy.Publisher('encoder', Odometry, queue_size=10)
-    pub_mag = rospy.Publisher('magnetometer', Odometry,queue_size=10)
-    pub_imu = rospy.Publisher('imu_k64', Imu, queue_size=10)
-    pub_imu2 = rospy.Publisher('imu_ext', Imu, queue_size=10)
+    pub_enc = rospy.Publisher('odometry/filtered', Odometry, queue_size=10)
+    pub_goal = rospy.Publisher('goal', Pose, queue_size=10)
+    pub_obstacle = rospy.Publisher('obstacle', Pose, queue_size=10)
+
+    # pub_mag = rospy.Publisher('magnetometer', Odometry,queue_size=10)
+    # pub_imu = rospy.Publisher('imu_k64', Imu, queue_size=10)
+    # pub_imu2 = rospy.Publisher('imu_ext', Imu, queue_size=10)
     global pos_l_old
     global pos_l_new
     global pos_r_old
@@ -63,58 +66,58 @@ def publish_messages():
     r = 0.02
     B = 0.185
     rospy.init_node('mavlink_manager_in', anonymous=True)
-    rate = rospy.Rate(20) # 10hz
+    rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         current_time = rospy.Time.now()
-        # imu = connection_in.recv_match(type='SCALED_IMU', blocking=True)
-        imu_ros = Imu()
-        imu_ros.header.stamp = current_time
-        imu_ros.header.frame_id = "odom"  # odom before
-        imu_ros.linear_acceleration.x = 0
-        imu_ros.linear_acceleration.y = 0
-        imu_ros.linear_acceleration.z = 0
-        imu_ros.linear_acceleration_covariance[0] = 0
-        imu_ros.linear_acceleration_covariance[4] = 0
-        imu_ros.linear_acceleration_covariance[8] = 0
-        # imu_ros.orientation.z = imu.zmag/10000
-        # imu_ros.orientation.w = sqrt(1-(imu.zmag/10000)**2)
-        # imu_ros.orientation.x = 0
-        # imu_ros.orientation.y = 0
-        imu_ros.orientation_covariance[8] = 0
-        pub_imu.publish(imu_ros)
-        # rospy.loginfo("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        # # imu = connection_in.recv_match(type='SCALED_IMU', blocking=True)
+        # imu_ros = Imu()
+        # imu_ros.header.stamp = current_time
+        # imu_ros.header.frame_id = "odom"  # odom before
+        # imu_ros.linear_acceleration.x = 0
+        # imu_ros.linear_acceleration.y = 0
+        # imu_ros.linear_acceleration.z = 0
+        # imu_ros.linear_acceleration_covariance[0] = 0
+        # imu_ros.linear_acceleration_covariance[4] = 0
+        # imu_ros.linear_acceleration_covariance[8] = 0
+        # # imu_ros.orientation.z = imu.zmag/10000
+        # # imu_ros.orientation.w = sqrt(1-(imu.zmag/10000)**2)
+        # # imu_ros.orientation.x = 0
+        # # imu_ros.orientation.y = 0
+        # imu_ros.orientation_covariance[8] = 0
+        # pub_imu.publish(imu_ros)
+        # # rospy.loginfo("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 
-        # Magnetometer is treated as a separate Odom topic
-        magneto_ros = Odometry()
-        magneto_ros.header.stamp = current_time
-        magneto_ros.header.frame_id = "odom"
-        magneto_ros.pose.pose.orientation.z = 0
-        magneto_ros.pose.pose.orientation.w = 0
-        magneto_ros.pose.pose.orientation.x = 0
-        magneto_ros.pose.pose.orientation.y = 0
-        pub_mag.publish(magneto_ros)
+        # # Magnetometer is treated as a separate Odom topic
+        # magneto_ros = Odometry()
+        # magneto_ros.header.stamp = current_time
+        # magneto_ros.header.frame_id = "odom"
+        # magneto_ros.pose.pose.orientation.z = 0
+        # magneto_ros.pose.pose.orientation.w = 0
+        # magneto_ros.pose.pose.orientation.x = 0
+        # magneto_ros.pose.pose.orientation.y = 0
+        # pub_mag.publish(magneto_ros)
         
-        # imu_ex = connection_in.recv_match(type='SCALED_IMU2', blocking=True)
-        imu_ros2 = Imu()
-        imu_ros2.header.stamp = current_time
-        imu_ros2.header.frame_id = "odom"  # odom before
-        imu_ros2.linear_acceleration.x = 0
-        imu_ros2.linear_acceleration.y = 0
-        imu_ros2.linear_acceleration.z = 0
-        imu_ros2.linear_acceleration_covariance[0] = 0
-        imu_ros2.linear_acceleration_covariance[4] = 0
-        imu_ros2.linear_acceleration_covariance[8] = 0
-        imu_ros2.angular_velocity.z = 0
-        imu_ros2.angular_velocity.x = 0
-        imu_ros2.angular_velocity.y = 0
-        imu_ros2.orientation.z = 0
-        imu_ros2.orientation.w = 0
-        imu_ros2.orientation.x = 0
-        imu_ros2.orientation.y = 0
-        imu_ros2.angular_velocity_covariance[0] = 2.5/10000
-        imu_ros2.angular_velocity_covariance[4] = 2.7/10000
-        imu_ros2.angular_velocity_covariance[8] = 2.6/10000
-        pub_imu2.publish(imu_ros2)
+        # # imu_ex = connection_in.recv_match(type='SCALED_IMU2', blocking=True)
+        # imu_ros2 = Imu()
+        # imu_ros2.header.stamp = current_time
+        # imu_ros2.header.frame_id = "odom"  # odom before
+        # imu_ros2.linear_acceleration.x = 0
+        # imu_ros2.linear_acceleration.y = 0
+        # imu_ros2.linear_acceleration.z = 0
+        # imu_ros2.linear_acceleration_covariance[0] = 0
+        # imu_ros2.linear_acceleration_covariance[4] = 0
+        # imu_ros2.linear_acceleration_covariance[8] = 0
+        # imu_ros2.angular_velocity.z = 0
+        # imu_ros2.angular_velocity.x = 0
+        # imu_ros2.angular_velocity.y = 0
+        # imu_ros2.orientation.z = 0
+        # imu_ros2.orientation.w = 0
+        # imu_ros2.orientation.x = 0
+        # imu_ros2.orientation.y = 0
+        # imu_ros2.angular_velocity_covariance[0] = 2.5/10000
+        # imu_ros2.angular_velocity_covariance[4] = 2.7/10000
+        # imu_ros2.angular_velocity_covariance[8] = 2.6/10000
+        # pub_imu2.publish(imu_ros2)
 
         # encoders = connection_in.recv_match(type='WHEEL_DISTANCE', blocking=True) # connection_in.messages['Odometry']
         # # print(connection_in)
@@ -122,6 +125,15 @@ def publish_messages():
         #     pos_l_old = encoders.distance[0]
         #     pos_r_old = encoders.distance[1]
         #     psi_old = 0
+        goal_point = Pose()
+        goal_point.position.x = 1
+        goal_point.position.y = 0
+        
+        obstacle_point = Pose()
+        obstacle_point.position.x = 100
+        obstacle_point.position.y = 0
+        
+        
             
         encoders_ros = Odometry()
         encoders_ros.header.stamp = current_time
@@ -150,13 +162,16 @@ def publish_messages():
 
         # encoders_ros.pose.pose.position.x = (encoders.distance[0]+encoders.distance[1])/2*cos(psi_new) #-x_0
         # encoders_ros.pose.pose.position.y = (encoders.distance[0]+encoders.distance[1])/2*sin(psi_new) #-y_0
-        encoders_ros.pose.pose.position.x = x_0 + (VR+VL)/2*cos(psi_new)
-        encoders_ros.pose.pose.position.y = y_0 + (VR+VL)/2*sin(psi_new)
+        encoders_ros.pose.pose.position.x = 0
+        encoders_ros.pose.pose.position.y = 0
         x_0 = encoders_ros.pose.pose.position.x
         y_0 = encoders_ros.pose.pose.position.y
-        print('Psi value from frdm', psi_new*180/pi, encoders_ros.pose.pose.position.x, encoders_ros.pose.pose.position.y, (pos_l_new+pos_r_new), x_0, y_0)
+        encoders_ros.pose.pose.orientation.w = 1
+        # print('Psi value from frdm', psi_new*180/pi, encoders_ros.pose.pose.position.x, encoders_ros.pose.pose.position.y, (pos_l_new+pos_r_new), x_0, y_0)
         # encoders_ros.pose.pose.position.y = 0
         pub_enc.publish(encoders_ros)
+        pub_goal.publish(goal_point)
+        pub_obstacle.publish(obstacle_point)
         rate.sleep()
 
 if __name__ == '__main__':
