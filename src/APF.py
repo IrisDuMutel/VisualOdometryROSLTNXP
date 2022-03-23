@@ -104,7 +104,7 @@ class APF():
         # END OF SIMULATION
         if abs(rho_goal)<=0.1:
             V_ref=0
-            psi_ref=0
+            # psi_ref=0
             eos=1
         else:
             eos=0

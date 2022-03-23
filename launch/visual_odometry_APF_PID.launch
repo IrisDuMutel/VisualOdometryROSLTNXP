@@ -1,0 +1,251 @@
+<!-- Usare questo -->
+<launch>
+    <remap from="/camera/color/image_raw" to="/camera/rgb/image_rect_color"/>
+    <remap from="/camera/depth/image_rect_raw" to="/camera/depth_registered/image_raw"/>
+    <remap from="/camera/color/camera_info" to="/camera/rgb/camera_info"/>
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+        <arg name="color_fps" value="15"/>
+        <arg name="enable_accel" value="true"/>
+        <arg name="enable_gyro" value="true"/>
+        <arg name="unite_imu_method" value="copy"/>
+        <arg name="align_depth" value="true"/>
+        <arg name="color_width" value="424"/>
+        <arg name="color_height" value="240"/>
+        <arg name="depth_width" value="424"/>
+        <arg name="depth_height" value="240"/>
+    </include>
+     <!-- <node pkg="imu_filter_madgwick" type="imu_filter_node" name="ImuFilter">
+        <param name="use_mag" type="bool" value="false" />
+        <param name="_publish_tf" type="bool" value="false" />
+        <param name="_world_frame" type="string" value="nwu" />
+        <remap from="/imu/data_raw" to="/camera/imu"/>
+    </node> -->
+
+    <!-- <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap">
+        <param name="approx_sync" value="true"/>
+        <param name="wait_imu_to_init" value="false"/>
+        <param name="imu_topic" value="/rtabmap/imu"/>
+        <param name="RGBD/Enabled" type="bool" value="false"/>
+    </node>
+
+    <node name="rtabmapviz" pkg="rtabmap_ros" type="rtabmapviz"/>
+    <node name="rtabmap_odom" pkg="rtabmap_ros" type="rgbd_odometry"/> -->
+
+    <include file="$(find rtabmap_ros)/launch/rtabmap.launch">
+        <arg name="approx_sync" value="true"/>
+        <arg name="wait_imu_to_init" value="false"/>
+        <arg name="imu_topic" value="/imu/data"/>
+        <arg name="rtabmapviz" value="true"/>
+        <arg name="rtabmap_args" default="$(find visual_odometry)/config/config.ini"/>
+        <arg name="database_path" default=""/>
+        <!-- <param name="RGBD/Enabled" type="bool" value="false"/> -->
+    </include>
+    <!-- Odometry fusion (EKF), refer to demo launch file in robot_localization for more info -->
+    <arg name="frame_id"                default="camera_link" />
+    <arg name="imu_topic"               default="/imu/data" />
+    <arg name="imu_ignore_acc"          default="false" />
+    <arg name="imu_remove_gravitational_acceleration" default="true" />
+
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization" clear_params="true" output="screen">
+
+        <param name="frequency" value="100"/> <!-- Changed from 50 to 100 -->
+        <param name="sensor_timeout" value="0.1"/>
+        <param name="two_d_mode" value="true"/>
+
+        <param name="odom_frame" value="odom"/>
+        <param name="base_link_frame" value="$(arg frame_id)"/>
+        <param name="world_frame" value="odom"/>
+
+        <param name="transform_time_offset" value="0.0"/>
+
+        <param name="odom0" value="/rtabmap/odom"/>
+        <param name="odom1" value="/encoder"/>
+        <param name="odom2" value="/magnetometer"/>
+        <param name="imu0" value="/imu_ext"/> 
+        <param name="imu1" value="/imu_k64"/>
+        <!-- <param name="imu2" value="/imu_ext"/> External IMU  -->
+
+        <!-- The order of the values is x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. -->
+        
+        <!-- Realsense images -->
+        <rosparam param="odom0_config">[true, true, true, <!--true, true, true, -->
+                                        false, false, false,
+                                        true, true, true, <!--true, true, true, -->
+                                        false, false, false,
+                                        false, false, false]</rosparam>
+
+        <!-- Encoders -->
+        <rosparam param="odom1_config">[true, false, false,
+                                        false, false, false,
+                                        false, false, false,
+                                        false, false, false,
+                                        false, false, false]</rosparam>
+        <!-- Magnetometer -->
+        <rosparam param="odom2_config">[false, false, false,
+                                        true, true,true,
+                                        false, false, false,
+                                        false, false, false,
+                                        false, false, false]</rosparam>
+
+        <!-- Realsense IMU  
+        <rosparam     if="$(arg imu_ignore_acc)" param="imu0_config">[
+                                        false, false, false,
+                                        false,  false,  false,  
+                                        false, false, false,
+                                        false, false, false,
+                                        false,  false,  false] </rosparam>
+                                        
+        <rosparam unless="$(arg imu_ignore_acc)" param="imu0_config">[
+                                        false, false, false,
+                                        false, false, false,
+                                        false, false, false,
+                                        false,  false,  false,
+                                        true,  false,  true] </rosparam>
+-->
+
+        <!-- External IMU -->
+        <rosparam     if="$(arg imu_ignore_acc)" param="imu0_config">[
+                                        false, false, false,
+                                        false, false, false, 
+                                        false,  false,  false,
+                                        true,  true,  true,
+                                        false,  false,  false] </rosparam>
+        <rosparam unless="$(arg imu_ignore_acc)" param="imu0_config">[
+                                        false, false, false,
+                                        false, false, false,  
+                                        false,  false,  false,
+                                        true,  true,  true,
+                                        true,  false,  true] </rosparam> 
+        
+
+        <!-- Freedom IMU -->
+        <rosparam     if="$(arg imu_ignore_acc)" param="imu0_config">[
+                                        false, false, false,
+                                        false,false,false, 
+                                        false, false, false,
+                                        false,  false,  false,
+                                        false,  false,  false] </rosparam>
+        <rosparam unless="$(arg imu_ignore_acc)" param="imu0_config">[
+                                        false, false, false,
+                                        false,false,false,  
+                                        false, false, false,
+                                        false,  false,  false,
+                                        true,  false,  true] </rosparam>  
+
+        
+        
+        <param name="odom0_differential" value="false"/>  <!-- Realsense Images -->
+        <param name="odom1_differential" value="true"/>   <!-- Encoders -->
+        <param name="odom2_differential" value="false"/>   <!-- Encoders -->
+        <param name="imu0_differential" value="false"/>   <!-- Realsense IMU -->
+        <param name="imu1_differential" value="false"/>   <!-- Freedom IMU -->
+        <!-- <param name="imu2_differential" value="false"/>   Ext IMU -->
+
+        <param name="odom0_relative" value="true"/>  <!-- Realsense Images-->
+        <param name="odom1_relative" value="true"/>  <!-- Encoders -->
+        <param name="odom2_relative" value="true"/>  <!-- Encoders -->
+        <param name="imu0_relative" value="true"/>   <!-- Realsense IMU-->
+        <param name="imu1_relative" value="true"/>   <!-- Freedom IMU-->
+        <!-- <param name="imu2_relative" value="true"/>   Ext IMU -->
+
+        <!-- # [ADVANCED] Some IMUs automatically remove acceleration due to gravity, and others don't. If yours doesn't, please set
+        # this to true, and *make sure* your data conforms to REP-103, specifically, that the data is in ENU frame. -->
+        <param name="imu0_remove_gravitational_acceleration" value="$(arg imu_remove_gravitational_acceleration)"/>
+        <param name="imu1_remove_gravitational_acceleration" value="true"/>
+        <!-- <param name="imu2_remove_gravitational_acceleration" value="true"/> -->
+
+        <param name="print_diagnostics" value="true"/>
+
+        <!-- ======== ADVANCED PARAMETERS ======== -->
+        <param name="odom0_queue_size" value="5"/>
+        <param name="odom1_queue_size" value="10"/>
+        <param name="odom2_queue_size" value="50"/>
+        <param name="imu0_queue_size" value="50"/>
+        <param name="imu1_queue_size" value="50"/>
+        <!-- <param name="imu2_queue_size" value="50"/> -->
+
+        <!-- The values are ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, 
+            vroll, vpitch, vyaw, ax, ay, az. --> 
+        <rosparam param="process_noise_covariance">[0.005, 0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                                                    0,    0.005, 0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                                                    0,    0,    0.006, 0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                                                    0,    0,    0,    0.003, 0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                                                    0,    0,    0,    0,    0.003, 0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                                                    0,    0,    0,    0,    0,    0.006, 0,     0,     0,    0,    0,    0,    0,    0,    0,
+                                                    0,    0,    0,    0,    0,    0,    0.0025, 0,     0,    0,    0,    0,    0,    0,    0,
+                                                    0,    0,    0,    0,    0,    0,    0,     0.0025, 0,    0,    0,    0,    0,    0,    0,
+                                                    0,    0,    0,    0,    0,    0,    0,     0,     0.004, 0,    0,    0,    0,    0,    0,
+                                                    0,    0,    0,    0,    0,    0,    0,     0,     0,    0.001, 0,    0,    0,    0,    0,
+                                                    0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0.001, 0,    0,    0,    0,
+                                                    0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0.002, 0,    0,    0,
+                                                    0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0.001, 0,    0,
+                                                    0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0.001, 0,
+                                                    0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0.0015]</rosparam>
+
+        <!-- The values are ordered as x, y,
+            z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. -->
+        <!-- <rosparam param="initial_estimate_covariance">[1, 0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    1, 0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    1, 0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    1, 0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    1, 0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    1, 0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    1, 0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    1, 0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    1, 0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    1,  0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     1,  0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     1,  0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     1, 0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    1, 0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    1]</rosparam> -->
+
+
+        <rosparam param="initial_estimate_covariance">[1e-9, 0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    1e-9, 0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    1e-9, 0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    1e-9, 0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    1e-9, 0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    1e-9, 0,    0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    1e-9, 0,    0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    1e-9, 0,    0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    1e-9, 0,     0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    1e-9,  0,     0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    1e-9,  0,     0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     1e-9,  0,    0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     1e-9, 0,    0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    1e-9, 0,
+                                                        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    1e-9]</rosparam>
+
+    </node>
+    <node name="vo_sender_APF" pkg="visual_odometry" type="vo_sender_APF.py" />
+    <node name="data_fused_receiver" pkg="visual_odometry" type="data_fused_receiver.py"/>
+    <node name="APF" pkg="visual_odometry" type="APF.py" />
+    <node name="PIDcontroller" pkg="visual_odometry" type="PIDcontroller.py" />
+    <node name="odometry_bag" pkg="rosbag" type="record" args="-o /media/lattepanda/pendrive/odom_bag.bag /odometry/filtered /APF_output /PID_cmd"/> 
+
+    
+</launch>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
