@@ -210,6 +210,7 @@
     <node name="data_fused_receiver" pkg="visual_odometry" type="data_fused_receiver.py"/>
     <node name="APF" pkg="visual_odometry" type="APF.py" />
     <node name="PIDcontroller" pkg="visual_odometry" type="PIDcontroller.py" />
+    <node name="GoalObsPub" pkg="visual_odometry" type="GoalObsPub.py" />
     <node name="odometry_bag" pkg="rosbag" type="record" args="-o /media/lattepanda/pendrive/odom_bag.bag /odometry/filtered /APF_output /PID_cmd"/> 
 
 </launch>
