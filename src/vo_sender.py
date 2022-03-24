@@ -14,13 +14,9 @@ from bagpy import bagreader
 import os
 os.environ['MAVLINK20']='1' # set mavlink2 for odometry message
 from pymavlink import mavutil
-# K64F_IP = '192.168.1.10' # Freedom K64F IP Address
-# K64F_PORT='8150'         # Freedom K64F UPD port
-# ADDRESS = 'upd:'+ K64F_IP + ':' + K64F_PORT
-connection = mavutil.mavlink_connection('udpout:192.168.1.10:8150')
-# connection_out = mavutil.mavlink_connection('udpin:192.168.1.10:8151')
 
-# odom_bag = rosbag.Bag('~/Desktop/odom.bag', 'w')
+connection = mavutil.mavlink_connection('udpout:192.168.1.10:8150')
+
 
 def mavlink_send(odom_sub):#, imu_sub):#,plan_sub):
     ### POSE DATA
@@ -67,10 +63,7 @@ def mavlink_send(odom_sub):#, imu_sub):#,plan_sub):
 def mavlink_manager():
     rospy.init_node('mavlink_manager', anonymous=True)
     odom_sub = rospy.Subscriber("/odometry/filtered", Odometry, callback=mavlink_send, queue_size=1)
-    # imu_sub =rospy.Subscriber("/imu/data", Imu, callback=mavlink_send, queue_size=1)
-    
     rospy.spin()
-
 
 if __name__ == '__main__':
     try:

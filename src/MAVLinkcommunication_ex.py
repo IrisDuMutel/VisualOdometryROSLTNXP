@@ -4,22 +4,14 @@
 # The odometry values are available to the FRDM to act appropriately
 
 import rospy
-import message_filters
 from nav_msgs.msg import Odometry
-from sensor_msgs.msg import Imu
-from visual_odometry.msg import PWM_cmd
-import time
-import rosbag
-import bagpy
-from bagpy import bagreader
-import numpy as np
 import os
 os.environ['MAVLINK20']='1' # set mavlink2 for odometry message
 from pymavlink import mavutil
+
 connection = mavutil.mavlink_connection('udpout:192.168.1.10:8150')
 
-def mavlink_send(odom_sub,PID_sub):#, imu_sub):#,plan_sub):
-    ### POSE DATA
+def mavlink_send(odom_sub):#, imu_sub):#,plan_sub):
     # Preparing odometry mavlink message
     time_usec = 0 
     frame_id = 0
@@ -41,11 +33,6 @@ def mavlink_send(odom_sub,PID_sub):#, imu_sub):#,plan_sub):
     # The following fields are not used
     pose_covariance = []
     velocity_covariance = []
-    
-    # PWM command
-    PWM_right = PID_sub.PWM_right
-    PWM_left  = PID_sub.PWM_left
-    
     for i in range(21):
         pose_covariance.append(0)
         velocity_covariance.append(0)
@@ -62,14 +49,9 @@ def mavlink_send(odom_sub,PID_sub):#, imu_sub):#,plan_sub):
                                 pose_covariance,velocity_covariance,\
                                 reset_counter,estimator_type)
 
-    connection.mav.rc_channels_send(0, 2, int(np.abs(PWM_left)), int(np.abs(PWM_right)), int(np.sign(PWM_left) + 2), int(np.sign(PWM_right)+2), 0, 0,0,0,0,0,0,0,0,0,0,0,0,0,254)    
-    
 def mavlink_manager():
     rospy.init_node('mavlink_manager', anonymous=True)
-    odom_sub = message_filters.Subscriber("/odometry/filtered", Odometry, queue_size=10)
-    PID_sub = message_filters.Subscriber("/PID_cmd", PWM_cmd, queue_size = 10)
-    ts = message_filters.ApproximateTimeSynchronizer([odom_sub,PID_sub], queue_size=10, slop=0.5, allow_headerless=True)
-    ts.registerCallback(mavlink_send)
+    odom_sub = rospy.Subscriber("/odometry/filtered", Odometry, callback=mavlink_send, queue_size=1)
     rospy.spin()
 
 if __name__ == '__main__':
