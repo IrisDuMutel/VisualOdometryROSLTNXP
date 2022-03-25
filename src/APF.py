@@ -17,9 +17,9 @@ from visual_odometry.msg import PWM_cmd,APF_cmd
 
 
 # Potential field characteristics
-rho_0 = 0.7;                   # Area of influence of obstacle  [m]
-kp    = 0.15;                  # Attractive pottential gain
-eta   = 0.05;                  # Repulsive potential gain
+rho_0 = 0.5;                   # Area of influence of obstacle  [m]
+kp    = 0.05;                  # Attractive pottential gain #0.15
+eta   = 0.005;                  # Repulsive potential gain  #0.05
 
 class APF():
     
@@ -76,8 +76,8 @@ class APF():
             rho     = math.dist(q,qc) # Distance with the nearest obstacle
             
             if rho<=rho_0:                          # Inside obstacle area! Danger
-                F_repx = eta*(1/rho - 1/rho_0)*1/(rho)^2*(X_est-X_obstacle)/math.dist(q,qc)
-                F_repy = eta*(1/rho - 1/rho_0)*1/(rho)^2*(Y_est-Y_obstacle)/math.dist(q,qc)
+                F_repx = eta*(1/rho - 1/rho_0)*1/(rho)**2*(X_est-X_obstacle)/math.dist(q,qc)
+                F_repy = eta*(1/rho - 1/rho_0)*1/(rho)**2*(Y_est-Y_obstacle)/math.dist(q,qc)
                 obst=1/rho
         # To find the goal if the obstacle is near
         dob=0.3
@@ -98,8 +98,8 @@ class APF():
         psi_ref=math.atan2(F_toty,F_totx) 
 
         # 2° prova per il campo di velocità
-        delta=0.4/rho_goal+obst
-        V_ref= 0.3*2/(2+delta)
+        delta=0.6/rho_goal+obst   #0.4
+        V_ref= 0.5*2/(2+delta)
 
         # END OF SIMULATION
         if abs(rho_goal)<=0.1:
