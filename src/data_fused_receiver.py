@@ -18,7 +18,7 @@ from pymavlink import mavutil
 # K64F_IP = '192.168.1.10' # Freedom K64F IP Address
 # K64F_PORT='8150'         # Freedom K64F UPD port
 # ADDRESS = 'upd:'+ K64F_IP + ':' + K64F_PORT
-connection_in = mavutil.mavlink_connection('udp:0.0.0.0:8151', input=True)
+connection_in = mavutil.mavlink_connection('udp:0.0.0.0:8151', input=True)#0.0.0.0 / 8151 old
 
 def mavlink_receiver():
 
@@ -65,7 +65,7 @@ def mavlink_receiver():
         imu_ros.linear_acceleration_covariance[8] = imu.xgyro/10**7
         imu_ros.orientation_covariance[8] = imu.ygyro/10**5
         pub_imu.publish(imu_ros)
-        # rospy.loginfo("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        # print("sequenza: ", imu.seq)
 
         # Magnetometer is treated as a separate Odom topic
         magneto_ros = Odometry()
