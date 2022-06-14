@@ -18,7 +18,7 @@ os.environ['MAVLINK20']='1' # set mavlink2 for odometry message
 from pymavlink import mavutil
 connection = mavutil.mavlink_connection('udpout:192.168.1.10:8150')
 
-def mavlink_send(odom_sub,PID_sub):#, imu_sub):#,plan_sub):
+def mavlink_send(odom_sub,controller_sub):#, imu_sub):#,plan_sub):
     ### POSE DATA
     # Preparing odometry mavlink message
     time_usec = 0 
@@ -43,8 +43,8 @@ def mavlink_send(odom_sub,PID_sub):#, imu_sub):#,plan_sub):
     velocity_covariance = []
     
     # PWM command
-    PWM_right = PID_sub.PWM_right
-    PWM_left  = PID_sub.PWM_left
+    PWM_right = controller_sub.PWM_right
+    PWM_left  = controller_sub.PWM_left
     
     for i in range(21):
         pose_covariance.append(0)
@@ -63,12 +63,12 @@ def mavlink_send(odom_sub,PID_sub):#, imu_sub):#,plan_sub):
                                 reset_counter,estimator_type)
 
     connection.mav.rc_channels_send(0, 2, int(np.abs(PWM_left)), int(np.abs(PWM_right)), int(np.sign(PWM_left) + 2), int(np.sign(PWM_right)+2), 0, 0,0,0,0,0,0,0,0,0,0,0,0,0,254)    
-    
+
 def mavlink_manager():
     rospy.init_node('mavlink_manager', anonymous=True)
     odom_sub = message_filters.Subscriber("/odometry/filtered", Odometry, queue_size=10)
-    PID_sub = message_filters.Subscriber("/PID_cmd", PWM_cmd, queue_size = 10)
-    ts = message_filters.ApproximateTimeSynchronizer([odom_sub,PID_sub], queue_size=10, slop=0.5, allow_headerless=True)
+    controller_sub = message_filters.Subscriber("/SMC_cmd", PWM_cmd, queue_size = 10)
+    ts = message_filters.ApproximateTimeSynchronizer([odom_sub,controller_sub], queue_size=10, slop=0.5, allow_headerless=True)
     ts.registerCallback(mavlink_send)
     rospy.spin()
 

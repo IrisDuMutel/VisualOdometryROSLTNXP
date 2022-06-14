@@ -9,7 +9,7 @@ def GoalObsPub():
     rospy.init_node('GoalObsPublisher', anonymous=True)
     goal = Pose()
     obstacle = Pose()
-    goal.position.x = 2.5
+    goal.position.x = 2
     goal.position.y = 0
     obstacle.position.x = 1
     obstacle.position.y = 0

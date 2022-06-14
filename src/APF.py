@@ -17,9 +17,9 @@ from visual_odometry.msg import PWM_cmd,APF_cmd
 
 
 # Potential field characteristics
-rho_0 = 0.5;                   # Area of influence of obstacle  [m]
-kp    = 0.05;                  # Attractive pottential gain #0.15
-eta   = 0.005;                  # Repulsive potential gain  #0.05
+rho_0 = 0.3;                   # Area of influence of obstacle  [m] #0.5
+kp    = 1;                  # Attractive potential gain #0.15
+eta   = 0.5;                  # Repulsive potential gain  #0.05
 
 class APF():
     
