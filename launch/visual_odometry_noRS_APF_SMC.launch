@@ -89,7 +89,7 @@
                                         false, false, false]</rosparam>
 
         <rosparam param="odom1_config">[false, false, false,
-                                        true, true,true,
+                                        false, false, false,
                                         false, false, false,
                                         false, false, false,
                                         false, false, false]</rosparam>
@@ -209,9 +209,9 @@
     <node name="vo_sender_APF" pkg="visual_odometry" type="vo_sender_APF.py" />
     <node name="data_fused_receiver" pkg="visual_odometry" type="data_fused_receiver.py"/>
     <node name="APF" pkg="visual_odometry" type="APF.py" />
-    <node name="PIDcontroller" pkg="visual_odometry" type="PIDcontroller.py" />
+    <node name="SMCcontroller" pkg="visual_odometry" type="SMCcontroller.py" />
     <node name="GoalObsPub" pkg="visual_odometry" type="GoalObsPub.py" />
-    <node name="odometry_bag" pkg="rosbag" type="record" args="-o /media/lattepanda/E/rosbags/ /odometry/filtered /APF_output /PID_cmd"/> 
+    <node name="odometry_bag" pkg="rosbag" type="record" args="-o /media/lattepanda/E/rosbags/odom_bag.bag /odometry/filtered /APF_output /SMC_cmd"/>  
 
 </launch>
 

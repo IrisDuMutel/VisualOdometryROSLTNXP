@@ -178,6 +178,7 @@ catkin_install_python(PROGRAMS
   src/PIDcontroller.py
   src/GoalObsPub.py
   src/vo_sender_APF.py
+  src/SMCcontroller.py
   
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

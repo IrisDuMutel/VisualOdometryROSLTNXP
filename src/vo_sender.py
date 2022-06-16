@@ -15,7 +15,7 @@ import os
 os.environ['MAVLINK20']='1' # set mavlink2 for odometry message
 from pymavlink import mavutil
 
-connection = mavutil.mavlink_connection('udpout:192.168.1.10:8150')
+connection = mavutil.mavlink_connection('udpout:192.168.1.10:8150') #it was 8150
 
 
 def mavlink_send(odom_sub):#, imu_sub):#,plan_sub):
