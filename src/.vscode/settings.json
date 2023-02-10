@@ -1,0 +1,14 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/lattepanda/catkin_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages",
+        "/home/lattepanda/librealsense/build/wrappers/python",
+        "/home/lattepanda/Documents"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/lattepanda/catkin_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages",
+        "/home/lattepanda/librealsense/build/wrappers/python",
+        "/home/lattepanda/Documents"
+    ]
+}

@@ -53,7 +53,9 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   PWM_cmd.msg
+  PWM_cmd2.msg
   APF_cmd.msg
+  Obsrv_cmd.msg
   # Message2.msg
 )
 
@@ -179,7 +181,8 @@ catkin_install_python(PROGRAMS
   src/GoalObsPub.py
   src/vo_sender_APF.py
   src/SMCcontroller.py
-  
+  src/SMObserver.py
+  src/SMObserver_message.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

@@ -112,7 +112,8 @@ class SMC():
 
         self.psid_prec = psid
         self.vd_prec= vd
-
+        self.msg.u1 = u1
+        self.msg.u2 = u2
         self.msg.PWM_left = PWM_L
         self.msg.PWM_right = PWM_R
         self.PIDpub.publish(self.msg)
